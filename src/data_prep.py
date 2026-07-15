@@ -14,7 +14,7 @@ import imagehash
 
 random.seed(42); np.random.seed(42)
 
-PROJECT_ROOT = "/kaggle/working/waste-classificator"
+PROJECT_ROOT = "/kaggle/working/waste_classificator"
 SOURCE_DATASETS = [
     "/kaggle/input/datasets/asdasdasasdas/garbage-classification/Garbage classification/Garbage classification",
     "/kaggle/input/datasets/feyzazkefe/trashnet/dataset-resized",
