@@ -16,8 +16,8 @@ random.seed(42); np.random.seed(42)
 
 PROJECT_ROOT = "/kaggle/working/waste-classificator"
 SOURCE_DATASETS = [
-    "/kaggle/input/garbage-classification/Garbage classification/Garbage classification",
-    "/kaggle/input/trashnet/dataset-resized",
+    "/kaggle/input/datasets/asdasdasasdas/garbage-classification/Garbage classification/Garbage classification",
+    "/kaggle/input/datasets/feyzazkefe/trashnet/dataset-resized",
 ]
 MERGED = Path(f"{PROJECT_ROOT}/data/raw/merged")
 DEST   = Path(f"{PROJECT_ROOT}/data/processed")
