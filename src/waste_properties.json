@@ -1,0 +1,87 @@
+{
+    "cardboard": {
+      "recyclable": true,
+      "reusable": true,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "Flatten the cardboard box to save space.",
+        "Keep it dry — wet cardboard cannot be recycled.",
+        "Remove any plastic tape or labels.",
+        "Place in the paper/cardboard recycling bin."
+      ]
+    },
+    "glass": {
+      "recyclable": true,
+      "reusable": true,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "Rinse the glass container to remove residue.",
+        "Do not mix with mirrors, window glass, or ceramics.",
+        "Place in the glass recycling bin if available.",
+        "Wrap broken glass in newspaper before disposal."
+      ]
+    },
+    "metal": {
+      "recyclable": true,
+      "reusable": false,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "Rinse cans and containers.",
+        "Crush cans to reduce volume.",
+        "Aluminum and steel are both recyclable.",
+        "Place in the metal recycling bin."
+      ]
+    },
+    "paper": {
+      "recyclable": true,
+      "reusable": false,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "Keep paper clean and dry.",
+        "Shred sensitive documents if needed.",
+        "Avoid recycling wax-coated or greasy paper.",
+        "Place in the paper recycling bin."
+      ]
+    },
+    "plastic": {
+      "recyclable": true,
+      "reusable": true,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "Check the resin code (1, 2, 5 are widely recyclable).",
+        "Rinse containers to remove food residue.",
+        "Replace caps back on bottles.",
+        "Place in the plastic recycling bin."
+      ]
+    },
+    "trash": {
+      "recyclable": false,
+      "reusable": false,
+      "safely_disposed": true,
+      "hazardous": false,
+      "handling_steps": [
+        "If contaminated with food, dispose in general waste.",
+        "Consider if any part is recyclable.",
+        "Use a sealed bag to prevent odors.",
+        "Place in the general waste bin."
+      ]
+    },
+    "battery": {
+      "recyclable": true,
+      "reusable": false,
+      "safely_disposed": false,
+      "hazardous": true,
+      "handling_steps": [
+        "NEVER throw in regular trash.",
+        "Store in a cool, dry place away from metal objects.",
+        "Tape the terminals of lithium batteries.",
+        "Drop off at designated battery collection points."
+      ]
+    }
+  }
+  
