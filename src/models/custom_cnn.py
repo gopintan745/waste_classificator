@@ -53,8 +53,7 @@ class WasteClassifierCNN(nn.Module):
         x = self.block3(x)
         x = self.block4(x)
         x = torch.cat([self.gap(x), self.gmp(x)])
-        x = self.head(x)
-        return x
+        return self.head(x)
 
 
 if __name__ == "__main__":
