@@ -35,7 +35,7 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
         arch = trial.suggest_categorical("arch", ["resnet50", "efficientnet_b0", "convnext_tiny"])
         model = build_transfer_model(arch=arch, num_classes=num_classes, dropout=dropout, freeze_backbone=False)
     else:
-        return "No model type of that sort. Choose between 'custom' or 'transfer' "
+        return "No model type of that sort. Choose between 'custom_cnn' or 'transfer' "
 
     train_ds = WasteDataset(data_root, train_transforms(img_size), "train")
     val_ds   = WasteDataset(data_root, test_transforms(img_size),   "val")
