@@ -16,9 +16,6 @@ import os
 import sys
 
 PROJECT_ROOT = "/kaggle/working/waste_classificator"
-DB_DIR = Path(f"{PROJECT_ROOT}/experiments/custom_cnn")
-DB_DIR.mkdir(parents=True, exist_ok=True)
-
 sys.path.append(PROJECT_ROOT)
 
 def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
@@ -31,7 +28,7 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
     dropout = trial.suggest_float("dropout", 0.1, 0.5)
     img_size = trial.suggest_categorical("img_size", [192, 224, 256])
 
-    if model_type == "custom":
+    if model_type == "custom_cnn":
         base_filters = trial.suggest_categorical("base_filters", [16, 32, 48])
         model = WasteClassifierCNN(num_classes=num_classes, base_filters=base_filters, dropout=dropout)
     elif model_type == "transfer":
