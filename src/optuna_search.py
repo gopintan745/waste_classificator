@@ -6,7 +6,7 @@ from src.models.custom_cnn import WasteClassifierCNN
 from src.models.transfer_model import build_transfer_model
 from src.train import train_one_epoch, evaluate
 from src.dataset import WasteDataset
-from src.transforms import train_transforms,val_transforms
+from src.transforms import train_transforms,test_transforms
 from torch.utils.data import DataLoader
 import torch.nn as nn
 from src.train import get_optimizer
@@ -33,7 +33,7 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
         return "No model type of that sort. Choose between 'custom' or 'transfer' "
 
     train_ds = WasteDataset(data_root, train_transforms(img_size), "train")
-    val_ds   = WasteDataset(data_root, val_transforms(img_size),   "val")
+    val_ds   = WasteDataset(data_root, test_transforms(img_size),   "val")
 
     train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True,  num_workers=4, pin_memory=True)
     val_loader   = DataLoader(val_ds,   batch_size=batch_size, shuffle=False, num_workers=4, pin_memory=True)
