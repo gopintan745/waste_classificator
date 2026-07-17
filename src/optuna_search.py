@@ -7,7 +7,7 @@ from src.models.custom_cnn import WasteClassifierCNN
 from src.models.transfer_model import build_transfer_model
 from src.train import train_one_epoch, evaluate
 from src.dataset import WasteDataset
-from src.transforms import train_transforms,test_transforms
+from src.transforms import train_transforms, test_transforms
 from torch.utils.data import DataLoader
 import torch.nn as nn
 from src.train import get_optimizer
@@ -18,7 +18,9 @@ import sys
 PROJECT_ROOT = "/kaggle/working/waste_classificator"
 sys.path.append(PROJECT_ROOT)
 
+
 def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
+    """Single trial: build model, train, return val accuracy."""
     # Hyperparameter search space
     lr = trial.suggest_float("lr", 1e-5, 1e-2, log=True)
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
@@ -35,7 +37,7 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
         arch = trial.suggest_categorical("arch", ["resnet50", "efficientnet_b0", "convnext_tiny"])
         model = build_transfer_model(arch=arch, num_classes=num_classes, dropout=dropout, freeze_backbone=False)
     else:
-        return "No model type of that sort. Choose between 'custom_cnn' or 'transfer' "
+        raise ValueError(f"Unknown model_type: {model_type}. Use 'custom_cnn' or 'transfer'.")
 
     train_ds = WasteDataset(data_root, train_transforms(img_size), "train")
     val_ds   = WasteDataset(data_root, test_transforms(img_size),   "val")
@@ -46,32 +48,45 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
     model = model.to(device)
     criterion = nn.CrossEntropyLoss(label_smoothing=0.1)
     optimizer = get_optimizer(optimizer_name, model.parameters(), lr, weight_decay)
-    
+
     if scheduler_name == "cosine":
         scheduler = CosineAnnealingLR(optimizer, T_max=max_epochs)
     elif scheduler_name == "onecycle":
         scheduler = OneCycleLR(optimizer, max_lr=lr, total_steps=max_epochs * len(train_loader))
     else:
         scheduler = None
-    
+
     scaler = torch.amp.GradScaler(device=device, enabled=True)
+
     for epoch in range(1, max_epochs + 1):
         _ = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler)
         val = evaluate(model, val_loader, criterion, device, num_classes)
         if scheduler is not None:
             scheduler.step()
-            trial.report(val["acc"], epoch)
-            if trial.should_prune():
-                raise optuna.exceptions.TrialPruned()
+        # Report and prune based on val accuracy
+        trial.report(val["acc"], epoch)
+        if trial.should_prune():
+            raise optuna.exceptions.TrialPruned()
+
     return val["acc"]
+
 
 def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20,
                project_root=PROJECT_ROOT):
+    """Run Optuna hyperparameter search and save results to SQLite."""
 
-    db_dir = Path(project_root) / "experiments" / model_type / "optuna_study.db"
+    # ============================================================
+    # FIX: Build directory path (no filename), then create it
+    # ============================================================
+    db_dir = Path(project_root) / "experiments" / model_type        # ← directory only
     db_dir.mkdir(parents=True, exist_ok=True)
+    db_file = db_dir / "optuna_study.db"                            # ← file path
+    storage_url = f"sqlite:///{db_file}"                            # ← absolute URL
 
-    storage_url = f"sqlite:///{db_dir}"  # triple slash for absolute path
+    print(f"Storage directory: {db_dir}")
+    print(f"Storage URL:       {storage_url}")
+    print(f"Directory exists:  {db_dir.exists()}")
+    print(f"Directory writable: {os.access(db_dir, os.W_OK)}")
 
     study = optuna.create_study(
         direction="maximize",
@@ -91,5 +106,5 @@ def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20,
     )
 
     print("Best params:", study.best_params)
-    print("Best F1:", study.best_value)
+    print("Best val acc:", study.best_value)
     return study
