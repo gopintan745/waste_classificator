@@ -2,6 +2,7 @@ import optuna
 from optuna.pruners import MedianPruner
 from optuna.samplers import TPESampler
 import torch
+from pathlib import Path
 from src.models.custom_cnn import WasteClassifierCNN
 from src.models.transfer_model import build_transfer_model
 from src.train import train_one_epoch, evaluate
@@ -11,7 +12,14 @@ from torch.utils.data import DataLoader
 import torch.nn as nn
 from src.train import get_optimizer
 from torch.optim.lr_scheduler import CosineAnnealingLR, OneCycleLR
+import os
+import sys
 
+PROJECT_ROOT = "/kaggle/working/waste_classificator"
+DB_DIR = Path(f"{PROJECT_ROOT}/experiments/custom_cnn")
+DB_DIR.mkdir(parents=True, exist_ok=True)
+
+sys.path.append(PROJECT_ROOT)
 
 def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
     # Hyperparameter search space
@@ -60,20 +68,31 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
                 raise optuna.exceptions.TrialPruned()
     return val["acc"]
 
-def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20):
+def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20,
+               project_root=PROJECT_ROOT):
+
+    db_dir = Path(project_root) / "experiments" / model_type / "optuna_study.db"
+    db_dir.mkdir(parents=True, exist_ok=True)
+
+    storage_url = f"sqlite:///{db_dir}"  # triple slash for absolute path
+
     study = optuna.create_study(
         direction="maximize",
         sampler=TPESampler(seed=42),
         pruner=MedianPruner(n_startup_trials=5, n_warmup_steps=3),
         study_name=f"{model_type}_study",
-        storage=f"sqlite:///experiments/{model_type}/optuna_study.db",
+        storage=storage_url,
         load_if_exists=True,
     )
+
     study.optimize(
-        lambda t: objective(t, model_type, data_root, num_classes, "cuda", max_epochs),
+        lambda t: objective(t, model_type, data_root, num_classes,
+                            "cuda" if torch.cuda.is_available() else "cpu",
+                            max_epochs),
         n_trials=n_trials,
         show_progress_bar=True,
     )
+
     print("Best params:", study.best_params)
     print("Best F1:", study.best_value)
     return study
