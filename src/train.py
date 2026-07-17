@@ -101,7 +101,7 @@ def fit(
     else:
         scheduler = None
 
-    scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+    scaler = torch.amp.GradScaler(device=device, enabled=use_amp)
 
     history = {"train_loss": [], "train_acc": [], "val_loss": [], "val_acc": [],
                "val_f1": []}
