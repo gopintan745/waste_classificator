@@ -102,7 +102,7 @@ def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20,
                             "cuda" if torch.cuda.is_available() else "cpu",
                             max_epochs),
         n_trials=n_trials,
-        show_progress_bar=True,
+        show_progress_bar=False,
     )
 
     print("Best params:", study.best_params)
