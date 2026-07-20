@@ -7,7 +7,7 @@ def train_transforms(img_size=(224,224)):
         transforms.RandomVerticalFlip(0.2),
         transforms.RandomRotation(degrees=15),
         transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-        transforms.RandomAffine(degrees=0, translation=(0.1, 0.1)),
+        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1)),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],
