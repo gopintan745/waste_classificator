@@ -1,8 +1,8 @@
 from torchvision import transforms
 
-def train_transforms(img_size=(224,224)):
+def train_transforms(img_size=224):
     return transforms.Compose([
-        transforms.Resize(img_size),
+        transforms.Resize((img_size, img_size)),
         transforms.RandomHorizontalFlip(0.5),
         transforms.RandomVerticalFlip(0.2),
         transforms.RandomRotation(degrees=15),
@@ -17,9 +17,9 @@ def train_transforms(img_size=(224,224)):
     ])
 
 
-def test_transforms(img_size=(224, 224)):
+def test_transforms(img_size=224):
     return transforms.Compose([
-        transforms.Resize(img_size),
+        transforms.Resize((img_size, img_size)),
         transforms.ToTensor(),
         transforms.Normalize(
             mean=[0.485, 0.456, 0.406],
