@@ -26,7 +26,7 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
     batch_size = trial.suggest_categorical("batch_size", [16, 32, 64])
     weight_decay = trial.suggest_float("weight_decay", 1e-6, 1e-3, log=True)
     optimizer_name = trial.suggest_categorical("optimizer", ["adamw", "sgd"])
-    scheduler_name = trial.suggest_categorical("scheduler", ["cosine", "onecycle"])
+    scheduler_name = trial.suggest_categorical("scheduler", ["cosine"])
     dropout = trial.suggest_float("dropout", 0.1, 0.5)
     img_size = trial.suggest_categorical("img_size", [192, 224, 256])
 
