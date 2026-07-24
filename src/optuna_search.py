@@ -59,10 +59,9 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
     scaler = torch.amp.GradScaler(device=device, enabled=True)
 
     for epoch in range(1, max_epochs + 1):
-        _ = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler)
+        _ = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler, scheduler)
         val = evaluate(model, val_loader, criterion, device, num_classes)
-        if scheduler is not None:
-            scheduler.step()
+        
         # Report and prune based on val accuracy
         trial.report(val["macro_acc"], epoch)
         if trial.should_prune():

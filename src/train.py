@@ -23,7 +23,7 @@ def get_optimizer(name, params, lr, weight_decay):
     raise ValueError(name)
 
 
-def train_one_epoch(model, loader, criterion, optimizer, device, scaler):
+def train_one_epoch(model, loader, criterion, optimizer, device, scaler, scheduler=None):
     model.train()
     total_loss, correct, total = 0, 0, 0
     for imgs, labels in loader:
@@ -39,6 +39,9 @@ def train_one_epoch(model, loader, criterion, optimizer, device, scaler):
         else:
             loss.backward()
             optimizer.step()
+
+        if scheduler is not None:
+            scheduler.step()
         total_loss += loss.item() * imgs.size(0)
         correct += (out.argmax(1) == labels).sum().item()
         total += imgs.size(0)
@@ -109,10 +112,8 @@ def fit(
 
     for epoch in range(1, epochs + 1):
         t0 = time.time()
-        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler)
+        train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler, scheduler=scheduler)
         val = evaluate(model, val_loader, criterion, device, num_classes)
-        if scheduler is not None:
-            scheduler.step()
 
         history["train_loss"].append(train_loss)
         history["train_acc"].append(train_acc)
