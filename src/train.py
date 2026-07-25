@@ -29,7 +29,7 @@ def train_one_epoch(model, loader, criterion, optimizer, device, scaler, schedul
     for imgs, labels in loader:
         imgs, labels = imgs.to(device), labels.to(device)
         optimizer.zero_grad()
-        with torch.amp.autocast(device=device, enabled=scaler is not None):
+        with torch.amp.autocast(device_type=device, enabled=scaler is not None):
             out = model(imgs)
             loss = criterion(out, labels)
         if scaler:
