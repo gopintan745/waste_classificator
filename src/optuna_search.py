@@ -62,12 +62,12 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
         _ = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler, scheduler)
         val = evaluate(model, val_loader, criterion, device, num_classes)
         
-        # Report and prune based on val accuracy
-        trial.report(val["macro_acc"], epoch)
+        # Report and prune based on val marco_f1
+        trial.report(val["macro_f1"], epoch)
         if trial.should_prune():
             raise optuna.exceptions.TrialPruned()
 
-    return val["macro_acc"]
+    return val["macro_f1"]
 
 
 def run_search(model_type, data_root, num_classes, n_trials=30, max_epochs=20,
