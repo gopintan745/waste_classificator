@@ -60,8 +60,8 @@ def objective(trial, model_type, data_root, num_classes, device, max_epochs=20):
 
     for epoch in range(1, max_epochs + 1):
         train_loss, train_acc = train_one_epoch(model, train_loader, criterion, optimizer, device, scaler, scheduler)
-        print(f"The training accuracy for epoch {epoch} is {train_acc} with loss {train_loss}")
         val = evaluate(model, val_loader, criterion, device, num_classes)
+        print({'Epoch ':epoch, 'Training Accuracy ': train_acc, 'Training Loss ':train_loss, 'Validation Accuracy ':val['acc'], 'Validation Loss ':val['loss']})
         
         # Report and prune based on val marco_f1
         trial.report(val["macro_f1"], epoch)
