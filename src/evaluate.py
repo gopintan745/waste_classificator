@@ -9,7 +9,7 @@ from src.transforms import train_transforms, test_transforms
 
 PROJECT_ROOT = '/kaggle/working/waste_classificator'
 
-def final_evaluation(model_type, data_root, num_classes, device):
+def final_evaluation(model_type, data_root, num_classes, epochs=30, device='cuda'):
     study = optuna.load_study(
         storage = f"sqlite:///{PROJECT_ROOT}/experiments/{model_type}/optuna_study.db",
         study_name = f"{model_type}_study"
@@ -38,5 +38,6 @@ def final_evaluation(model_type, data_root, num_classes, device):
         weight_decay=best_params['weight_decay'],
         optimizer_name=best_params['optimizer_name'],
         scheduler_name=best_params['scheduer_name'],
-        device=device
+        device=device,
+        epochs=epochs
     )
