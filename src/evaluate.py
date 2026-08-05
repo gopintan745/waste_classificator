@@ -7,11 +7,10 @@ from src.models.custom_cnn import WasteClassifierCNN
 from src.models.transfer_model import build_transfer_model
 from src.transforms import train_transforms, test_transforms
 
-PROJECT_ROOT = '/kaggle/working/waste_classificator'
 
-def final_evaluation(model_type, data_root, num_classes, epochs=30, device='cuda'):
+def final_evaluation(model_type, db_root, data_root, num_classes, epochs=30, device='cuda'):
     study = optuna.load_study(
-        storage = f"sqlite:///{PROJECT_ROOT}/experiments/{model_type}/optuna_study.db",
+        storage = f"sqlite:///{db_root}/optuna_study.db", #Kaggle path to the database
         study_name = f"{model_type}_study"
     )
     best_params = study.best_params
