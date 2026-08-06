@@ -20,13 +20,13 @@ class WasteClassifier:
         # Determine model architecture from checkpoint
         num_classes = len(self.classes)
         # Heuristic: look for "fc" in keys
-        is_resnet = any("fc." in k for k in ckpt["model"].keys())
-        if is_resnet:
+        is_transfer = any("fc." in k for k in ckpt["model"].keys())
+        if is_transfer:
             from src.models.transfer_model import build_transfer_model
             return build_transfer_model("resnet50", num_classes, pretrained=False)
         else:
-            from src.models.custom_cnn import CustomWasteCNN
-            return CustomWasteCNN(num_classes)
+            from src.models.custom_cnn import WasteClassifierCNN
+            return WasteClassifierCNN(num_classes)
 
     @torch.no_grad()
     def predict(self, image_path, top_k=3, threshold=0.6):

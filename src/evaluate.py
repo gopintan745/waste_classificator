@@ -1,3 +1,4 @@
+from typing import Literal
 import torch
 import optuna
 from torch.utils.data import DataLoader
@@ -9,7 +10,7 @@ from src.transforms import train_transforms, test_transforms
 
 
 def final_evaluation(model_type, db_root, data_root, num_classes, 
-                     epochs=50, device='cuda'):
+                     epochs=50, device='cuda', dataset_type=Literal["trashnet", "merged"]):
     """Run final training using the best HPO hyperparameters, then evaluate on test set."""
     
     # ============================================
@@ -75,7 +76,7 @@ def final_evaluation(model_type, db_root, data_root, num_classes,
         scheduler_name=best_params['scheduler'],         # fixed: was 'scheduer_name'
         device=device,
         epochs=epochs,
-        save_dir=f"/kaggle/working/waste_classificator/experiments/{model_type}_final",
+        save_dir=f"/kaggle/working/waste_classificator/experiments/{model_type}_{dataset_type}_final",
         patience=10,    # slightly more lenient than default 7
     )
 
