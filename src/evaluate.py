@@ -77,7 +77,7 @@ def final_evaluation(model_type, db_root, data_root, num_classes,
         device=device,
         epochs=epochs,
         save_dir=f"/kaggle/working/waste_classificator/experiments/{model_type}_{dataset_type}_final",
-        patience=10,    # slightly more lenient than default 7
+        patience=20,    # slightly more lenient than default 7
     )
 
 
