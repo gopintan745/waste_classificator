@@ -1,4 +1,4 @@
-from typing import Literal
+#from typing import Literal
 import torch
 import optuna
 from torch.utils.data import DataLoader
@@ -8,9 +8,8 @@ from src.models.custom_cnn import WasteClassifierCNN
 from src.models.transfer_model import build_transfer_model
 from src.transforms import train_transforms, test_transforms
 
-
-def final_evaluation(model_type, db_root, data_root, num_classes, 
-                     epochs=50, device='cuda', dataset_type=Literal["trashnet", "merged"]):
+def final_evaluation(model_type, db_root, data_root, num_classes, dataset,
+                     epochs=50, device='cuda',):
     """Run final training using the best HPO hyperparameters, then evaluate on test set."""
     
     # ============================================
@@ -59,6 +58,13 @@ def final_evaluation(model_type, db_root, data_root, num_classes,
         )
     else:
         raise ValueError(f"Unknown model_type '{model_type}'. Choose 'custom_cnn' or 'transfer'.")
+
+    if dataset == 'trashnet':
+        save_dir = f'/kaggle/working/waste_classificator/experiments/{model_type}_{dataset}_final'
+    elif dataset == 'merged':
+        save_dir = f'/kaggle/working/waste_classificator/experiments/{model_type}_{dataset}_final'
+    else:
+        raise ValueError(f"Unknown dataset '{dataset}'. Choose 'trashnet' or 'merged'.")
     
     # ============================================
     # Run final training with best hyperparameters
@@ -76,7 +82,7 @@ def final_evaluation(model_type, db_root, data_root, num_classes,
         scheduler_name=best_params['scheduler'],         # fixed: was 'scheduer_name'
         device=device,
         epochs=epochs,
-        save_dir=f"/kaggle/working/waste_classificator/experiments/{model_type}_{dataset_type}_final",
+        save_dir=f"{save_dir}",
         patience=20,    # slightly more lenient than default 7
     )
 
