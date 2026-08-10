@@ -1,3 +1,10 @@
+/*
+This is the final results from the custom CNN model icluding 
+test results, training and validation loss history, training and 
+validation accuracy and F1 score history on the merged dataset.
+*/
+
+
 {
   "test": {
     "loss": 0.8837145686464134,

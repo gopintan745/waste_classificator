@@ -1,3 +1,9 @@
+/*
+This is the final results from the custom CNN model icluding 
+test results, training and validation loss history, training and 
+validation accuracy and F1 score history on TrashNet.
+*/
+
 {
   "test": {
     "loss": 0.8346267555774659,
