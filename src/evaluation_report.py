@@ -26,7 +26,7 @@ PATHS = {
         "arch":       "custom",
     },
     "EfficientNet-B0 (TrashNet)": {
-        "model_path": "/kaggle/working/waste_classificator/experiments/transfer_trashnet_final/best_model.pth",
+        "model_path": "/kaggle/working/waste_classificator/experiments/transfer_trashnet_fianl/best_model.pth",
         "data_root":  "/kaggle/working/waste_classificator/data/processed",
         "arch":       "transfer",
     },
