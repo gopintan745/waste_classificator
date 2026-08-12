@@ -17,22 +17,22 @@ from pathlib import Path
 PATHS = {
     "Custom CNN (TrashNet)": {
         "model_path": "/kaggle/working/waste_classificator/experiments/custom_cnn_trashnet_final/best_model.pth",
-        "data_root":  "/kaggle/input/waste-classification-trashnet/processed",
+        "data_root":  "/kaggle/working/waste_classificator/data/processed",
         "arch":       "custom",
     },
     "Custom CNN (Merged)": {
         "model_path": "/kaggle/working/waste_classificator/experiments/custom_cnn_merged_final/best_model.pth",
-        "data_root":  "/kaggle/input/waste-classification-merged/processed",
+        "data_root":  "/kaggle/input/datasets/godfredopintan/waste-classification",
         "arch":       "custom",
     },
     "EfficientNet-B0 (TrashNet)": {
         "model_path": "/kaggle/working/waste_classificator/experiments/transfer_trashnet_final/best_model.pth",
-        "data_root":  "/kaggle/input/waste-classification-trashnet/processed",
+        "data_root":  "/kaggle/working/waste_classificator/data/processed",
         "arch":       "transfer",
     },
     "EfficientNet-B0 (Merged)": {
         "model_path": "/kaggle/working/waste_classificator/experiments/transfer_merged_final/best_model.pth",
-        "data_root":  "/kaggle/input/waste-classification-merged/processed",
+        "data_root":  "/kaggle/input/datasets/godfredopintan/waste-classification",
         "arch":       "transfer",
     },
 }
