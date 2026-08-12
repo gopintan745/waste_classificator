@@ -74,7 +74,7 @@ def load_model(model_path, data_root, arch, device="cuda"):
 # ============================================
 # PER-CLASS METRICS
 # ============================================
-def compute_per_class_metrics(model, loader, num_classes, class_names, device="cuda"):
+def compute_per_class_metrics(model, loader, num_classes, class_names=CLASS_NAMES, device="cuda"):
     """Compute per-class precision, recall, F1, and confusion matrix."""
     f1_metric     = MulticlassF1Score(num_classes=num_classes, average=None).to(device)
     prec_metric   = MulticlassPrecision(num_classes=num_classes, average=None).to(device)
