@@ -6,7 +6,7 @@ import streamlit as st
 from typing import Dict, List
 import plotly.graph_objects as go
 import pandas as pd
-
+from quality_checks import run_all_checks
 
 # ============================================
 # RESULT DISPLAY COMPONENTS
@@ -242,3 +242,84 @@ def update_history(result: Dict):
         "confidence": result["confidence"],
         "is_ambiguous": result["is_ambiguous"],
     })
+
+# In ui_components.py
+def show_classification_history():
+    """Show all past classifications in this session."""
+    if "history" not in st.session_state or not st.session_state["history"]:
+        return
+    
+    st.markdown("### 📜 Classification History")
+    for i, item in enumerate(reversed(st.session_state["history"]), 1):
+        with st.expander(f"#{i}: {item['class'].title()} ({item['confidence']:.1%})"):
+            st.write(item)
+
+
+def show_quality_report(quality_result: Dict):
+    """Display image quality check results."""
+    st.markdown("### 📸 Image Quality Check")
+    
+    # Quality score with color
+    score = quality_result["quality_score"]
+    if score >= 85:
+        score_color = "🟢"
+        score_label = "Excellent"
+    elif score >= 70:
+        score_color = "🟡"
+        score_label = "Good"
+    elif score >= 50:
+        score_color = "🟠"
+        score_label = "Fair"
+    else:
+        score_color = "🔴"
+        score_label = "Poor"
+    
+    st.markdown(
+        f"**Quality Score: {score_color} {score:.0f}/100 ({score_label})**"
+    )
+    
+    # Warnings (more prominent)
+    if quality_result["warnings"]:
+        for warning in quality_result["warnings"]:
+            st.warning(warning)
+    
+    # Info (in expander for less visual clutter)
+    if quality_result["info"]:
+        with st.expander(f"✅ Passed checks ({len(quality_result['info'])})", 
+                         expanded=False):
+            for info_msg in quality_result["info"]:
+                st.markdown(info_msg)
+    
+    # Decision
+    if not quality_result["should_proceed"]:
+        st.error(
+            "**⛔ Classification blocked due to critical image quality issues.** "
+            "Please upload a better image before proceeding."
+        )
+    elif quality_result["warnings"]:
+        st.info(
+            "**⚠️ Classification will proceed, but accuracy may be affected.** "
+            "Consider taking a better photo for more reliable results."
+        )
+
+
+def show_quality_tips():
+    """Display tips for taking good waste photos."""
+    with st.expander("📷 Tips for taking a good photo"):
+        st.markdown("""
+        **For best results:**
+        
+        1. **Lighting:** Use even, natural light. Avoid harsh shadows or direct sunlight.
+        2. **Background:** Use a plain, contrasting background (white, gray, or solid color).
+        3. **Framing:** Center the item in the frame. Fill 60-80% of the image with the object.
+        4. **Focus:** Make sure the object is sharp, not blurry.
+        5. **Single object:** Photograph one item at a time.
+        6. **Distance:** Hold the camera 30-60 cm from the object.
+        7. **Angle:** Take the photo from a standard 3/4 view, not extreme angles.
+        
+        **Examples of good vs. bad photos:**
+        - ✅ Good: A single glass jar on a white table, well-lit
+        - ❌ Bad: A cluttered drawer with many items
+        - ❌ Bad: A blurry photo taken in low light
+        - ❌ Bad: A photo from an extreme angle (looking up at the object)
+        """)

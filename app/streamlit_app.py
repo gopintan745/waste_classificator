@@ -23,7 +23,8 @@ from ui_components import (
     show_session_analytics,
     update_history,
 )
-
+from quality_checks import run_all_checks, auto_correct_image 
+from ui_components import show_quality_report, show_quality_tips
 
 # ============================================
 # PAGE CONFIGURATION
@@ -164,6 +165,8 @@ else:
         img_source = camera_input
 
 
+
+
 # ============================================
 # PROCESSING AND DISPLAY
 # ============================================
@@ -180,7 +183,43 @@ if img_source is not None:
         st.markdown("### 📷 Input Image")
         st.image(img, caption="Uploaded image", use_container_width=True)
 
-    # Run inference
+    # Try auto-correction first
+    img, corrections = auto_correct_image(img)
+    if corrections:
+        with st.expander("🔧 Auto-corrections applied"):
+            for c in corrections:
+                st.markdown(f"- {c}")
+
+    # ============================================
+    # NEW: Image quality checks
+    # ============================================
+    with st.spinner("🔍 Checking image quality..."):
+        quality_result = run_all_checks(img)
+
+    with col2:
+        st.markdown("### 🎯 Image Quality")
+        show_quality_report(quality_result)
+
+    # Show tips below
+    show_quality_tips()
+
+    # ============================================
+    # Proceed only if critical checks pass
+    # ============================================
+    if not quality_result["should_proceed"]:
+        st.markdown("---")
+        st.error(
+            "**Please upload a better image to proceed with classification.** "
+            "See the quality report above for specific issues."
+        )
+        st.stop()
+
+    # ============================================
+    # Classification (only if quality is acceptable)
+    # ============================================
+    st.markdown("---")
+    st.markdown("### 🎯 Classification Result")
+    
     with st.spinner("🔍 Analyzing material..."):
         try:
             result = classifier.predict(img)
@@ -188,16 +227,22 @@ if img_source is not None:
             st.error(f"Prediction failed: {e}")
             st.stop()
 
+    # Add quality context to the prediction
+    if quality_result["warnings"]:
+        st.info(
+            "ℹ️ **Note:** Image quality was below ideal. "
+            "The prediction may be less reliable. Consider retaking the photo."
+        )
+
     # Update history
     update_history(result)
 
-    # Display results
-    with col2:
-        st.markdown("### 🎯 Classification Result")
-        display_classification_result(result)
-
-    # Feedback widget
-    show_feedback_widget(result, image_key=f"img_{len(st.session_state.get('history', []))}")
+    # Display classification result
+    display_classification_result(result)
+    
+    # Show quality info in the feedback widget
+    feedback_key = f"img_{len(st.session_state.get('history', []))}_{quality_result['quality_score']:.0f}"
+    show_feedback_widget(result, image_key=feedback_key)
 
     # ============================================
     # ABOUT THIS PREDICTION
